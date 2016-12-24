@@ -1,10 +1,11 @@
 import numpy as np
 
 # ----- Unique test values ----------
-s = np.arange(81) # arrange has US spelling...
-s = s.reshape(9,9)
-print(s)
+# s = np.arange(81) # arrange has US spelling...
+# s = s.reshape(9,9)
 
+# references for the buckets so a set of coordinates can be associated with 
+# a single bucket
 bucket_locations = np.array([["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"], 
                     ["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"],
                     ["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"],
@@ -15,6 +16,19 @@ bucket_locations = np.array([["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b
                     ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"],
                     ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"]])
     
+# test array of a complete and correct puzzle
+s = np.array([[9,8,3,4,5,7,6,2,1], 
+              [1,6,7,2,8,9,3,5,4],
+              [2,5,4,3,6,1,8,9,7],
+              [8,1,5,7,9,4,2,3,6],
+              [4,7,6,5,3,2,1,8,9],
+              [3,2,9,6,1,8,4,7,5],
+              [5,9,8,1,4,3,7,6,2],
+              [6,4,2,8,7,5,9,1,3],
+              [7,3,1,9,2,6,5,4,8]])
+print(s)        
+
+
 # ---- Uncomment this to run ----------
 # s = np.zeros(81)
 # s = s.reshape(9,9)
@@ -77,13 +91,14 @@ def gen_buckets(s):
     bucket = np.concatenate([a,b,c])
     buckets["b9"] = bucket    
     
-    print(buckets)
+    return buckets
     
     # find a loop to generate this code...
     
 def gen_possibilities():
     ''' Assigns a list from 1-9 for each coordinate '''
-    pass
+    a = [1,2,3,4,5,6,7,8,9]
+    return [[a for x in range(9)] for x in range(9)]
 
 
 def check_conflicts(val, n):
@@ -101,10 +116,31 @@ def check_conflicts(val, n):
     row = s[n[0]]
     col = s[:, n[1]]
     print(bucket)
-    return val in row or val in col
+    return val in row or val in col or val in buckets[bucket]
     # add check bucket conflicts separately
     # convert n to two ints, c and r
     
+    
+# ------------------------check_conflicts tests ----------------------
+poss = gen_possibilities()
+print(poss[0][0][0] == 1)
+print(poss[8][8][8] == 9)
+print(poss[3][7][5] == 6)
+print(poss[0][8][4] == 5)
+print(poss[8][0][8] == 9)
+
+
+buckets = gen_buckets(s)
+# for x in range(1,10):
+    # print(check_conflicts(x, [1,2]))
+# print(check_conflicts(2, [1,1]))
+# print(check_conflicts(2, [0,0]))
+# print(check_conflicts(5, [8,8]))
+# print(check_conflicts(2, [1,8]))
+# print(check_conflicts(2, [8,1]))
+# print(check_conflicts(2, [8,2]))
+
+
 def trim_possibilities(n):
     '''Works in a similar way to check_conflicts, but narrows down the possibility
         space for each coordinate.
@@ -113,12 +149,3 @@ def trim_possibilities(n):
     
     '''
     pass
-    
-# ------------------------check_conflicts tests ----------------------
-print(check_conflicts(2, [2,2]))
-print(check_conflicts(2, [0,0]))
-print(check_conflicts(2, [8,8]))
-print(check_conflicts(2, [1,8]))
-print(check_conflicts(2, [8,1]))
-print(check_conflicts(2, [8,2]))
-gen_buckets(s)
