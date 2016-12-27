@@ -111,7 +111,7 @@ def gen_possibilities():
     return [[a for x in range(9)] for x in range(9)]
 
 
-def check_conflicts(val, n, buckets):
+def check_conflicts(val, n, buckets, puzzle):
     '''Checks any conflicts within the row n[0] and the columnn[1]
     - val is an int of which we are checking for instances in the lists
     - n is a list of length 2
@@ -122,9 +122,10 @@ def check_conflicts(val, n, buckets):
     assert len(n) == 2, "n must be of length 2. n provided is of length %d" % len(n)
     
     bucket = bucket_locations[n[0]][n[1]]
-    numberToCheck = s[n[0]][n[1]]
-    row = s[n[0]]
-    col = s[:, n[1]]
+    numberToCheck = puzzle[n[0]][n[1]]
+    row = puzzle[n[0]]
+    col = puzzle[:, n[1]]
+    print(buckets[bucket], row, col)
     return val in row or val in col or val in buckets[bucket]
     # add check bucket conflicts separately
     # convert n to two ints, c and r
@@ -147,7 +148,8 @@ def trim_possibilities(x, y, poss, buckets, puzzle):
         # check if the number is an available possibility or if the value has already been assigned to the puzzle
         if n == 0 or s[x][y] != 0:
             continue
-        result = check_conflicts(n, [x, y], buckets)
+        result = check_conflicts(n, [x, y], buckets, puzzle)
+        print(result, x,y,n)
         if result == False:
           #  print("[", x, ",", y,"]", n)
             tempPoss.append(n)
