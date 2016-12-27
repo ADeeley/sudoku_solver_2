@@ -132,7 +132,7 @@ def check_conflicts(val, n, buckets):
     
 
 
-def trim_possibilities(x, y, poss, buckets):
+def trim_possibilities(x, y, poss, buckets, puzzle):
     '''Works in a similar way to check_conflicts, but narrows down the possibility
         space for each coordinate.
         Calls check_conflicts for each possibility remaining in coordinate n.
@@ -140,6 +140,9 @@ def trim_possibilities(x, y, poss, buckets):
     '''
         # for every number which is not zero in the list, if it does not conflict, then add it to temp list
     tempPoss = []
+    if puzzle[x][y] != 0 and poss[x][y] != []:
+        poss[x][y] = []
+        
     for n in poss[x][y]:
         # check if the number is an available possibility or if the value has already been assigned to the puzzle
         if n == 0 or s[x][y] != 0:
@@ -166,7 +169,8 @@ def trim_pass(puzzle, runs, poss, buckets):
     for run in range(runs):
         for x in range(9):        
             for y in range(9):
-                trim_possibilities(x,y, poss, buckets)
+                
+                trim_possibilities(x,y, poss, buckets, puzzle)
         add_to_puzzle(puzzle, poss)
 
 def print_possibilities(poss):
