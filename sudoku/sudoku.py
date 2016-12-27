@@ -17,26 +17,26 @@ bucket_locations = np.array([["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b
                     ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"]])
     
 # test array of a complete and correct puzzle
-# s = np.array([[9,8,3,4,5,7,6,2,1], 
-              # [1,6,7,2,8,9,3,5,4],
-              # [2,5,4,3,6,1,8,9,7],
-              # [8,1,5,7,9,4,2,3,6],
-              # [4,7,6,5,3,2,1,8,9],
-              # [3,2,9,6,1,8,4,7,5],
-              # [5,9,8,1,4,3,7,6,2],
-              # [6,4,2,8,7,5,9,1,3],
-              # [7,3,1,9,2,6,5,4,8]])
+control = np.array([[9,8,3,4,5,7,6,2,1], 
+                     [1,6,7,2,8,9,3,5,4],
+                     [2,5,4,3,6,1,8,9,7],
+                     [8,1,5,7,9,4,2,3,6],
+                     [4,7,6,5,3,2,1,8,9],
+                     [3,2,9,6,1,8,4,7,5],
+                     [5,9,8,1,4,3,7,6,2],
+                     [6,4,2,8,7,5,9,1,3],
+                     [7,3,1,9,2,6,5,4,8]])
               
-s = np.array([[9,8,3,4,5,7,6,2,1], 
-                    [1,6,7,0,8,9,3,5,4],
-                    [2,5,4,3,6,1,8,9,7],
-                    [8,1,5,7,9,4,2,3,6],
-                    [4,7,6,0,3,2,1,8,9],
-                    [3,2,9,6,1,8,4,7,5],
-                    [5,9,8,1,4,3,0,6,2],
-                    [6,4,2,8,7,5,9,1,3],
-                    [7,3,1,9,2,6,5,4,0]])              
-print(s)        
+s = np.array([[0,0,0,4,5,7,0,2,1], 
+                     [1,6,0,0,0,0,0,5,4],
+                     [0,5,0,0,6,1,0,0,7],
+                     [0,0,5,7,9,4,0,3,6],
+                     [4,7,6,0,0,0,1,8,0],
+                     [0,2,0,6,1,0,4,7,5],
+                     [5,0,0,0,4,0,0,6,2],
+                     [6,0,2,0,0,5,0,0,3],
+                     [7,3,0,0,0,0,5,4,0]])              
+#print(s)        
 
 
 # ---- Uncomment this to run ----------
@@ -111,7 +111,7 @@ def gen_possibilities():
     return [[a for x in range(9)] for x in range(9)]
 
 
-def check_conflicts(val, n):
+def check_conflicts(val, n, buckets):
     '''Checks any conflicts within the row n[0] and the columnn[1]
     - val is an int of which we are checking for instances in the lists
     - n is a list of length 2
@@ -130,45 +130,55 @@ def check_conflicts(val, n):
     # convert n to two ints, c and r
     
     
-# ------------------------check_conflicts tests ----------------------
-poss = gen_possibilities()
-# print(poss[0][0][0] == 1)
-# print(poss[8][8][8] == 9)
-# print(poss[3][7][5] == 6)
-# print(poss[0][8][4] == 5)
-# print(poss[8][0][8] == 9)
-# print(poss[8][0][8] == 10)
-# print(poss[8][0][8] == 0)
 
 
-buckets = gen_buckets(s)
-# for x in range(1,10):
-    # print(check_conflicts(x, [1,2]))
-# print(check_conflicts(2, [1,1]))
-# print(check_conflicts(2, [0,0]))
-# print(check_conflicts(5, [8,8]))
-# print(check_conflicts(2, [1,8]))
-# print(check_conflicts(2, [8,1]))
-# print(check_conflicts(2, [8,2]))
-
-
-def trim_possibilities(x, y):
+def trim_possibilities(x, y, poss, buckets):
     '''Works in a similar way to check_conflicts, but narrows down the possibility
         space for each coordinate.
         Calls check_conflicts for each possibility remaining in coordinate n.
     - n is a list of length 2
     '''
-    count = 1
+        # for every number which is not zero in the list, if it does not conflict, then add it to temp list
+    tempPoss = []
     for n in poss[x][y]:
-        if n == 0:
+        # check if the number is an available possibility or if the value has already been assigned to the puzzle
+        if n == 0 or s[x][y] != 0:
             continue
-        result = check_conflicts(n, [x, y])
+        result = check_conflicts(n, [x, y], buckets)
         if result == False:
-            print("[", x, ",", y,"]", n)
-        count += 1
+          #  print("[", x, ",", y,"]", n)
+            tempPoss.append(n)
+    if tempPoss != []:
+        poss[x][y] = tempPoss
+    
 
-def trim_pass(runs):
-''' Runs trim_possibilities runs amount of times '''
-    for x in range(9):
+def add_to_puzzle(puzzle, poss):
+    '''Adds all len(1) possibility lists to the puzzle'''
+    for x in range(9):        
         for y in range(9):
-            trim_possibilities(x,y)
+            if len(poss[x][y]) == 1:
+                puzzle[x][y] = poss[x][y][0]
+                print(x,y, poss[x][y][0])
+                poss[x][y] = []
+    
+def trim_pass(puzzle, runs, poss, buckets):
+    ''' Runs trim_possibilities runs amount of times '''
+    for run in range(runs):
+        for x in range(9):        
+            for y in range(9):
+                trim_possibilities(x,y, poss, buckets)
+        add_to_puzzle(puzzle, poss)
+
+def print_possibilities(poss):
+    for x in range(9):        
+        for y in range(9):
+            print("row ", x, "col ", y, " ", poss[x][y])
+
+
+# ------------------------check_conflicts tests ----------------------
+# poss = gen_possibilities()
+# buckets = gen_buckets(s)
+# trim_pass(30)
+# print_possibilities()
+# print(s)            
+# print("Is equal to control:  \n", s == control)            
