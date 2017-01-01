@@ -2,6 +2,8 @@ import numpy as np
 
 # references for the buckets so a set of coordinates can be associated with 
 # a single bucket
+
+
 bucket_locations = np.array([["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"], 
                                              ["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"],
                                              ["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"],
@@ -12,26 +14,6 @@ bucket_locations = np.array([["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b
                                              ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"],
                                              ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"]])
     
-# test array of a complete and correct puzzle
-solvedPuzzle = np.array([[8,2,9,4,3,1,6,5,7], 
-                                       [4,6,7,5,8,9,2,1,3],
-                                       [3,5,1,2,6,7,9,8,4],
-                                       [7,1,6,8,4,2,3,9,5],
-                                       [5,3,2,1,9,6,4,7,8],
-                                       [9,8,4,7,5,3,1,6,2],
-                                       [1,4,3,6,7,5,8,2,9],
-                                       [6,9,5,3,2,8,7,4,1],
-                                       [2,7,8,9,1,4,5,3,6]])   
-# solvedPuzzle with elements removed                                   
-puzzle = np.array([[8,2,0,0,0,1,6,0,7], 
-                             [0,6,7,5,0,9,2,0,0],
-                             [3,0,0,0,6,0,9,0,0],
-                             [0,1,0,0,0,0,3,9,5],
-                             [0,0,2,0,0,0,4,0,0],
-                             [9,8,4,0,0,0,0,6,0],
-                             [0,0,3,0,7,0,0,0,9],
-                             [0,0,5,3,0,8,7,4,0],
-                             [2,0,8,9,0,0,0,3,6]])             
 
 def gen_buckets(puzzle):
     ''' Generates a dictionary with bucket names as the keys.
@@ -179,3 +161,24 @@ def run_solver(puzzle, solvedPuzzle):
     puzzle = trim_pass(puzzle, 6, gen_possibilities(), gen_buckets(puzzle))
     print("\nFinished puzzle:", puzzle)            
     print("\nIs equal to solvedPuzzle:  \n", puzzle == solvedPuzzle)            
+    
+# test array of a complete and correct puzzle
+solvedPuzzle = np.array([[8,2,9,4,3,1,6,5,7], 
+                                       [4,6,7,5,8,9,2,1,3],
+                                       [3,5,1,2,6,7,9,8,4],
+                                       [7,1,6,8,4,2,3,9,5],
+                                       [5,3,2,1,9,6,4,7,8],
+                                       [9,8,4,7,5,3,1,6,2],
+                                       [1,4,3,6,7,5,8,2,9],
+                                       [6,9,5,3,2,8,7,4,1],
+                                       [2,7,8,9,1,4,5,3,6]])   
+# solvedPuzzle with elements removed                                   
+puzzle = np.array([[8,2,0,0,0,1,6,0,7], 
+                             [0,6,7,5,0,9,2,0,0],
+                             [3,0,0,0,6,0,9,0,0],
+                             [0,1,0,0,0,0,3,9,5],
+                             [0,0,2,0,0,0,4,0,0],
+                             [9,8,4,0,0,0,0,6,0],
+                             [0,0,3,0,7,0,0,0,9],
+                             [0,0,5,3,0,8,7,4,0],
+                             [2,0,8,9,0,0,0,3,6]])             
