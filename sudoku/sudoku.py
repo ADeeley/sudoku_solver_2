@@ -3,17 +3,8 @@ import numpy as np
 # references for the buckets so a set of coordinates can be associated with 
 # a single bucket
 
+# generate the unique square IDs
 
-bucket_locations = np.array([["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"], 
-                                             ["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"],
-                                             ["b1", "b1", "b1", "b2", "b2", "b2", "b3", "b3", "b3"],
-                                             ["b4", "b4", "b4", "b5", "b5", "b5", "b6", "b6", "b6"],
-                                             ["b4", "b4", "b4", "b5", "b5", "b5", "b6", "b6", "b6"],
-                                             ["b4", "b4", "b4", "b5", "b5", "b5", "b6", "b6", "b6"],
-                                             ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"],
-                                             ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"],
-                                             ["b7", "b7", "b7", "b8", "b8", "b8", "b9", "b9", "b9"]])
-    
 
 def gen_buckets(puzzle):
     ''' Generates a dictionary with bucket names as the keys.
@@ -161,24 +152,94 @@ def run_solver(puzzle, solvedPuzzle):
     puzzle = trim_pass(puzzle, 6, gen_possibilities(), gen_buckets(puzzle))
     print("\nFinished puzzle:", puzzle)            
     print("\nIs equal to solvedPuzzle:  \n", puzzle == solvedPuzzle)            
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+solvedPuzzle = "829431657467589213351267984716842395532196478984753162143675829695328741278914536"                                     
+puzzle = "820001607067509200300060900010000395002000400984000060003070009005308740208900036"
+
+"""
+820001607
+067509200
+300060900
+010000395
+002000400
+984000060
+003070009
+005308740
+208900036
+"""
+
+
+def cross(A, B):
+    "Cross product of elements in A and elements in B."
+    return [a+b for a in A for b in B]
+
+def assign_refs_to_squares(puzzle, squares):
+    "Returns a dictionary of squares to values. Should be updated every run."
+    return dict((s, puzzle[squares.index(s)])for s in squares)
     
-# test array of a complete and correct puzzle
-solvedPuzzle = np.array([[8,2,9,4,3,1,6,5,7], 
-                                       [4,6,7,5,8,9,2,1,3],
-                                       [3,5,1,2,6,7,9,8,4],
-                                       [7,1,6,8,4,2,3,9,5],
-                                       [5,3,2,1,9,6,4,7,8],
-                                       [9,8,4,7,5,3,1,6,2],
-                                       [1,4,3,6,7,5,8,2,9],
-                                       [6,9,5,3,2,8,7,4,1],
-                                       [2,7,8,9,1,4,5,3,6]])   
-# solvedPuzzle with elements removed                                   
-puzzle = np.array([[8,2,0,0,0,1,6,0,7], 
-                             [0,6,7,5,0,9,2,0,0],
-                             [3,0,0,0,6,0,9,0,0],
-                             [0,1,0,0,0,0,3,9,5],
-                             [0,0,2,0,0,0,4,0,0],
-                             [9,8,4,0,0,0,0,6,0],
-                             [0,0,3,0,7,0,0,0,9],
-                             [0,0,5,3,0,8,7,4,0],
-                             [2,0,8,9,0,0,0,3,6]])             
+def assign_peers_to_values(references, peers, squares):
+    """Returns a dictionary of peers, with each key a square and each value
+    a set of the unique peer values."""
+    peerValues = {}
+    #print("\n\nReferences: ", references, "\n\nPeers: ", peers, "\n\nSquares :", squares)
+    for p in squares: # gets the reference
+        vals = set({})
+        for s in peers[p]:
+            vals.add(references[s])
+        peerValues[p] = (vals)
+    
+    assert len(peerValues) == 81, "List must be of len 81"
+    assert type(peerValues["A1"]) == set, "List element 0 not of type set"
+    assert type(peerValues["I9"]) == set, "List element 80 not of type set"
+    
+    return peerValues
+    
+digits = '123456789'
+rows = 'ABCDEFGHI'
+cols = digits
+
+squares = cross(rows, cols)
+unitlist = ([cross(rows, c) for c in cols] +
+[cross(r, cols) for r in rows] +
+[cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')])
+
+units = dict((s, [u for u in unitlist if s in u]) for s in squares)
+peers = dict((s, set(sum(units[s],[]))-set([s])) for s in squares)
+poss = dict((a, {str(x) for x in range(1,10)}) for a in squares)
+references = assign_refs_to_squares(puzzle, squares)
+peerValues = assign_peers_to_values(references, peers, squares)
+
+
+# iterate over the possibilites and remove any that conflict
+print(poss)
+for square in squares:
+    poss[square].difference_update(peerValues[square])
+
+print(poss)            
+    
