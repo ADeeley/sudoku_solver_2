@@ -1,16 +1,24 @@
 ======
-sudoku
+Sudoku
 ======
 
 
-Add a short description here!
+An iterative sudoku solver
 
 
 Description
 ===========
 
-A LONGER DESCRIPTION OF YOUR PROJECT GOES HERE...
+A console based Sudoku puzzle solver, written in Python. 
 
+Update the array in the file and run the script to solve the puzzle.
+
+To Do
+=====
+
++ Separate the puzzle array into a separate file to remove hardcoding.
++ Improve UI in the console for more intuative use.
++ Refine the algorithm to allow solving of hard puzzles.
 
 Note
 ====
